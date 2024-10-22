@@ -55,7 +55,7 @@ const LivroDados = () => {
 
         const sucesso = await incluirLivro(livro);
         if (sucesso) {
-            router.push('/livrolista'); // Navega para a lista de livros
+            router.push('/livrolista?added=true'); // Adiciona um parâmetro à URL
         } else {
             alert('Erro ao incluir o livro.');
         }

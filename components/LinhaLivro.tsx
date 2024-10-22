@@ -19,7 +19,6 @@ export const LinhaLivro: React.FC<LinhaLivroProps> = (props) => {
 
   return (
     <tr>
-      <td>{livro.codigo}</td>
       <td>{livro.titulo}</td>
       <td>{livro.resumo}</td>
       <td>{livro.autores.join(', ')}</td>

@@ -3,34 +3,44 @@ import styles from '../styles/Home.module.css';
 import Head from 'next/head';
 import { Menu } from '../components/Menu';
 import { LinhaLivro } from '../components/LinhaLivro';
-import { ControleLivros } from '../classes/controle/ControleLivros'; // Certifique-se de ajustar o caminho
-import { NextPage } from 'next'; // Importando NextPage
+import { Livro } from '../classes/modelo/Livro'; // Ajuste o caminho conforme necessário
 
-const controleLivros = new ControleLivros();
-
-const obterLivros = () => {
-    return controleLivros.getLivros();
-};
-
-const excluirLivro = (codigo: number) => {
-    controleLivros.excluir(codigo);
-};
-
-const LivroLista: NextPage = () => {
-    const [livros, setLivros] = useState<Array<Livro>>([]);
+const LivroLista = () => {
+    const [livros, setLivros] = useState<Livro[]>([]);
     const [carregado, setCarregado] = useState<boolean>(false);
-  
+
+    // Função para obter livros da API
+    const obterLivros = async () => {
+        const resposta = await fetch('http://localhost:3000/api/livros');
+        if (resposta.ok) {
+            const data = await resposta.json();
+            setLivros(data);
+        } else {
+            console.error('Erro ao buscar livros:', resposta.statusText);
+        }
+    };
+
+    // Função para excluir livro
+    const excluirLivro = async (codigo: number) => {
+        const resposta = await fetch(`http://localhost:3000/api/livros/${codigo}`, {
+            method: 'DELETE',
+        });
+
+        if (resposta.ok) {
+            // Recarrega os livros após a exclusão
+            obterLivros();
+        } else {
+            console.error('Erro ao excluir livro:', resposta.statusText);
+        }
+    };
+
+    // UseEffect para carregar os livros ao montar o componente
     useEffect(() => {
         if (!carregado) {
-            setLivros(obterLivros());
+            obterLivros();
             setCarregado(true);
         }
     }, [carregado]);
-  
-    const excluir = (codigo: number) => {
-        excluirLivro(codigo);
-        setCarregado(false); // Força o recarregamento da lista após excluir
-    };
 
     return (
         <div className={styles.container}>
@@ -47,18 +57,20 @@ const LivroLista: NextPage = () => {
                 <table>
                     <thead>
                         <tr>
-                        <th>Código</th>
-                        <th>Título</th>
-                        <th>Ações</th>
+                            <th>Título</th>
+                            <th>Resumo</th>
+                            <th>Autores</th>
+                            <th>Editora</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {livros.map((livro) => (
-                        <LinhaLivro
-                            key={livro.codigo}
-                            livro={livro}
-                            excluir={() => excluir(livro.codigo)}
-                        />
+                            <LinhaLivro
+                                key={livro.codigo}
+                                livro={livro}
+                                excluir={() => excluirLivro(livro.codigo)}
+                            />
                         ))}
                     </tbody>
                 </table>
