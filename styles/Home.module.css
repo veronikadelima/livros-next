@@ -1,0 +1,21 @@
+.container {
+    width: 100vw;
+    max-width: 80%;
+    margin: auto;
+}
+
+.main {
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 36px;
+}
+
+.form {
+    width: 100%;
+}

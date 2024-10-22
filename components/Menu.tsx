@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const Menu: React.FC = () => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <Link href="/" passHref legacyBehavior>
           <a className="navbar-brand">Loja Next</a>
@@ -22,17 +22,17 @@ export const Menu: React.FC = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link href="/" passHref legacyBehavior>
+              <Link href='/' passHref legacyBehavior>
                 <a className="nav-link">Página Inicial</a>
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/LivroLista" passHref legacyBehavior>
+              <Link href="/livrolista" passHref legacyBehavior>
                 <a className="nav-link">Lista de Livros</a>
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/LivroDados" passHref legacyBehavior>
+              <Link href="/livrodados" passHref legacyBehavior>
                 <a className="nav-link">Cadastro de Livros</a>
               </Link>
             </li>
