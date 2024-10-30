@@ -5,10 +5,13 @@ import { Menu } from '../components/Menu';
 import { ControleEditora } from '../classes/controle/ControleEditora';
 import { useRouter } from 'next/router'; // Importa useRouter do Next.js
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 const controleEditora = new ControleEditora();
-const baseURL = "http://localhost:3000/api/livros";
+const baseURL = `${apiUrl}/api/livros`;
+console.log('API URL:', apiUrl);
 
 const LivroDados = () => {
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [titulo, setTitulo] = useState<string>('');
     const [resumo, setResumo] = useState<string>('');
     const [autores, setAutores] = useState<string>('');
@@ -27,6 +30,7 @@ const LivroDados = () => {
 
     // Função para incluir livro na API
     const incluirLivro = async (livro: any) => {
+        console.log(livro);
         const response = await fetch(baseURL, {
             method: 'POST',
             headers: {
@@ -34,9 +38,16 @@ const LivroDados = () => {
             },
             body: JSON.stringify(livro),
         });
-        return response.ok; // Retorna o campo ok da resposta
+    
+        // Se a resposta não for ok, capture e log a mensagem de erro
+        if (!response.ok) {
+            const errorData = await response.json(); // Obtém a resposta JSON
+            console.error('Erro ao incluir livro:', errorData);
+            return false;
+        }
+    
+        return true; // Retorna true se a inclusão foi bem-sucedida
     };
-
     // Tratamento do combo de editoras
     const tratarCombo = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setCodEditora(Number(event.target.value)); // Converte para número
@@ -45,19 +56,20 @@ const LivroDados = () => {
     // Método incluir, para lidar com o evento de submissão
     const incluir = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Elimina o comportamento padrão
+        setErrorMessage(null);
         const livro = {
             codigo: 0, // Código será gerado pelo backend
             codEditora,
             titulo,
             resumo,
-            autores: autores.split('\n'), // Autores separados por linha
+            autores: autores.split('\n').map(author => author.trim()).filter(author => author !== ''),
         };
-
+    
         const sucesso = await incluirLivro(livro);
         if (sucesso) {
             router.push('/livrolista?added=true'); // Adiciona um parâmetro à URL
         } else {
-            alert('Erro ao incluir o livro.');
+            setErrorMessage('Erro ao incluir o livro. Por favor, tente novamente.'); // Define a mensagem de erro
         }
     };
 
@@ -68,13 +80,14 @@ const LivroDados = () => {
                 <meta name="description" content="Inclusão de um novo livro" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
+    
             <Menu />
-
+    
             <main className={styles.main}>
                 <h1 className={styles.title}>Incluir Livro</h1>
+                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>} {/* Exibe mensagem de erro */}
                 <form onSubmit={incluir} className={styles.form}>
-                    <div className="mb-3">
+                <div className="mb-3">
                         <label htmlFor="input1" className="form-label">Título:</label>
                         <input
                             id="input1"
@@ -120,6 +133,5 @@ const LivroDados = () => {
             </main>
         </div>
     );
-};
-
+}
 export default LivroDados;

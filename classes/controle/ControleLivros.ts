@@ -21,14 +21,13 @@ export class ControleLivros {
     incluir(livro: Livro):void {
       livro.codigo = this.livros.length > 0 ? Math.max(...this.livros.map(l => l.codigo)) + 1 : 1;
       this.livros.push(livro);
-      console.log('Livro a ser incluído:', livro);
     }
 
     // Excluir livro
     excluir(codigo: number): void {
         const indice = this.livros.findIndex(livro => livro.codigo === codigo);
         if (indice !== -1) {
-            this.livros.splice(indice, 1);
+          this.livros.splice(indice, 1);
         }
     }
 }
