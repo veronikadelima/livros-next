@@ -37,9 +37,9 @@ const LivroLista = () => {
     
             if (resposta.ok) {
                 console.log('Livro excluído com sucesso');
-                // Tente obter o texto da resposta para garantir que o backend está confirmando a exclusão
                 const result = await resposta.text(); 
                 console.log('Resposta da API após exclusão:', result);
+                //Atualização da lista de livros após a exclusão
                 setLivros(livros.filter((livro) => livro.codigo !== codigo));
                 
             } else {
